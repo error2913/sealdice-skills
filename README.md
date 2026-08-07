@@ -17,24 +17,22 @@
 
 ## 安装到 Codex
 
-将技能目录复制到 `~/.codex/skills`（或 `$CODEX_HOME/skills`）：
+将技能目录同步到 `~/.codex/skills`（或 `$CODEX_HOME/skills`）。使用 `/MIR`
+镜像模式，可同时清除已安装副本中多余的文件（例如历史嵌套目录）：
 
 ```powershell
-# 安装/同步全部技能
-.\scripts\sync-to-codex.ps1
-
-# 或手动复制单个技能
-Copy-Item -Recurse .\sealdice-plugin-dev $HOME\.codex\skills\
+$codexSkills = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $HOME '.codex\skills' }
+'sealdice-plugin-dev','sealdice-custom-reply','sealdice-deck','sealdice-sealpack' | ForEach-Object {
+    robocopy (Join-Path $PWD $_) (Join-Path $codexSkills $_) /MIR /NFL /NDL /NP
+}
 ```
 
 安装后重启 Codex 即可自动发现这些技能。
 
 ## 同步说明
 
-本仓库是唯一事实来源。修改技能后请：
-
-1. 提交仓库变更；
-2. 重新运行 `.\scripts\sync-to-codex.ps1` 同步本机已安装副本。
+本仓库是唯一事实来源。修改技能后提交仓库变更，并重新执行上面的同步命令更新本机
+Codex 技能目录；已安装副本不需要在仓库外单独维护。
 
 ## 时效性维护
 

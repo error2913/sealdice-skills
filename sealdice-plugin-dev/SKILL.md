@@ -12,7 +12,7 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 | 快速写一个最小 JS 插件 | §2 单文件 | `assets/plugin-template.js`、`references/js_start.md` |
 | 大型插件 / TypeScript 工程化 | §3 工程模板 | `references/js_project.md` |
 | 查某个 `seal.*` API | §5 API 速查 | `references/seal.d.ts`（最权威）、`references/js_api_list.md` |
-| 抄实战写法（HTTP、图片、长流程等） | §5 | `references/js_example.md` |
+| 参考实战写法（HTTP、图片、长流程等） | §5 | `references/js_example.md` |
 | 自定义规则模板（GameSystem） | §5 | `references/js_gamesystem.md` |
 | 搭建测试环境 / 指令测试 / 连接 WebUI / QQ 验证 | §4 | `references/test-environment.md` |
 | WebUI 中如何管理 JS 插件 | §4 | `references/config_jsscript.md` |
@@ -50,12 +50,12 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 4. 子指令：用 `cmdArgs.getArgN(1)`（**1-based**）做 switch 分发；参数 `-xx=yy` 用 `getKwarg('xx')`。
 5. 代骰：`const targetCtx = seal.getCtxProxyFirst(ctx, cmdArgs)`，后续业务一律用 `targetCtx`。
 6. 回复：`seal.replyToSender(ctx, msg, text)`（最常用）、`replyGroup`、`replyPerson`；模板 `seal.format(ctx, text)`。
-7. 事件钩子：`onLoad` / `onMessageReceived` / `onNotCommandReceived`（关键词回复神器）/ `onMessageSend` / `onCommandReceived`。
+7. 事件钩子：`onLoad` / `onMessageReceived` / `onNotCommandReceived`（常用于关键词回复）/ `onMessageSend` / `onCommandReceived`。
 8. 配置项：`seal.ext.registerStringConfig/IntConfig/FloatConfig/BoolConfig/TemplateConfig/OptionConfig`，读取对应 `getXxxConfig(ext, key)`；全部出现在 WebUI「插件设置」。
 9. 持久化：`ext.storageSet(key, string)` / `storageGet(key)`，**只接受字符串**，复杂结构用 `JSON.stringify/parse`。
 10. 定时任务：`seal.ext.registerTask(ext, 'daily', '08:30', fn, 'key', '描述')` 或 `cron`（5 位表达式）。
 
-常用坑：热重载重复注册（永远先 find）；`getArgN` 1-based；storage 只收字符串；别名复制对象导致回调丢失；私聊/群 ctx 不同，跨群发消息用 `seal.createTempCtx`；fetch 是异步的，结果用 `replyToSender` 后续推送；goja 无 DOM，npm 包先验证。
+常见陷阱：热重载重复注册（永远先 find）；`getArgN` 1-based；storage 只收字符串；别名复制对象导致回调丢失；私聊/群 ctx 不同，跨群发消息用 `seal.createTempCtx`；fetch 是异步的，结果用 `replyToSender` 后续推送；goja 无 DOM，npm 包先验证。
 
 ## 3. 方式二：TypeScript 工程模板
 

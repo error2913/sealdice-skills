@@ -70,7 +70,7 @@ ext.onMessageReceived = (ctx, msg) => {
 };
 
 ext.onNotCommandReceived = (ctx, msg) => {
-  // 非指令消息触发，做关键词回复神器
+  // 非指令消息触发，常用于关键词回复
   if (msg.message.includes('在吗')) {
     seal.replyToSender(ctx, msg, '在的');
   }

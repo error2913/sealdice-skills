@@ -1,0 +1,4 @@
+interface:
+  display_name: "海豹牌堆助手"
+  short_description: "海豹牌堆编写与管理：TOML/JSON/YAML、抽取语法"
+  default_prompt: "Use $sealdice-deck to create a SealDice deck file."

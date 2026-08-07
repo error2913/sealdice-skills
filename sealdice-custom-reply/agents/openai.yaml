@@ -1,0 +1,4 @@
+interface:
+  display_name: "海豹自定义回复助手"
+  short_description: "海豹自定义回复编写与调试：YAML、条件与豹语"
+  default_prompt: "Use $sealdice-custom-reply to write and debug a SealDice custom reply YAML."

@@ -1,0 +1,13 @@
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# 环境与密钥
+.env
+*.env
+
+# 临时文件
+tmp/

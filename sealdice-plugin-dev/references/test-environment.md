@@ -192,7 +192,7 @@ QQ_MCP_LISTEN_GROUPS=<GROUP_ID>                    # 可选，逗号分隔
 
 ## 6. 推荐测试顺序（新插件）
 
-1. 写代码 → 模板工程先 `npm run check`（lint/typecheck/build/smoke）。
+1. 写代码 → 工程模板先 `npm run check`（lint/typecheck/build/smoke）。
 2. 本地海豹 → 控制台跑最小片段（验证 API 存在性与签名）。
 3. 上传插件 + 重载 → 日志确认加载无报错。
 4. 辅助工具 → 指令测试（私聊 + 群两种模式）验证指令行为。

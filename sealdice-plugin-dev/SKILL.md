@@ -16,6 +16,9 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 | 自定义规则模板（GameSystem） | §5 | `references/js_gamesystem.md` |
 | 搭建测试环境 / 指令测试 / 连接 WebUI / QQ 验证 | §4 | `references/test-environment.md` |
 | WebUI 中如何管理 JS 插件 | §4 | `references/config_jsscript.md` |
+| 编写自定义回复（关键词自动回复） | 其他技能 | `sealdice-custom-reply` |
+| 编写牌堆 / 抽牌内容 | 其他技能 | `sealdice-deck` |
+| 手动打包 / 发布扩展包（.sealpack） | 其他技能 | `sealdice-sealpack` |
 
 不确定时：先读 `references/introduce.md` + `references/js_start.md`。
 
@@ -26,6 +29,9 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 - 海豹注入的全局：`seal`（全部海豹 API）、`console`、`setTimeout/setInterval`、`fetch`、`atob/btoa`。
 - 不支持 Node 模块、`require`、`process`、`fs`、DOM。
 - 工程化方式（TypeScript 编译为 ES6 单文件）与单文件 JS 功能无差异，仅工程便利度不同。
+
+术语约定（本套技能统一）：WebUI 页面名「JS 扩展」与「JS 插件」同义；「扩展包」是
+`.sealpack` 的正式名称，「豹包」是俗称；牌堆=文件，牌组=可抽取项，牌堆项=其中一条内容。
 
 ## 2. 方式一：单文件 JS 插件
 
@@ -54,7 +60,7 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 ## 3. 方式二：TypeScript 工程模板
 
 1. `git clone https://github.com/sealdice/sealdice-js-ext-template`（或用 Use this template 建仓库）。
-2. 必改信息：`tools/build-config.js` 开头的 `filename`（决定产物名）、`package.json` 的 `version`（版本唯一来源）、`header.txt` 元数据头、`sealpack/info.toml`（豹包元数据）。
+2. 必改信息：`tools/build-config.js` 开头的 `filename`（决定产物名）、`package.json` 的 `version`（版本唯一来源）、`header.txt` 元数据头、`sealpack/info.toml`（扩展包/豹包元数据）。
 3. `npm install` → 代码写在 `src/index.ts` → `npm run build`，产物在 `dist/<filename>.js`（默认 `sealdice-js-ext.js`）。
 4. 开发检查：`npm run check` = lint + typecheck（`tsc --noEmit --strict`）+ build + smoke（用 seal 桩在 Node 加载产物，提前发现加载期 ReferenceError/TypeError）。
 5. 可引用 npm 包（模板自带 lodash-es），优先 ESM；强 native 依赖的包可能不兼容 goja。
@@ -138,4 +144,6 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 | `references/introduce.md` | 官方进阶章节总览 |
 | `assets/plugin-template.js` | 立即可用的单文件插件骨架 |
 
-范围说明：自定义文案/自定义回复/牌堆/帮助文档/敏感词等 WebUI 内容资产不在本技能范围，需要时查官方手册 config 章节。
+范围说明：自定义文案/帮助文档/敏感词等 WebUI 内容资产不在本技能范围，需要时查官方手册
+config 章节；自定义回复、牌堆、扩展包打包分别使用 `sealdice-custom-reply`、
+`sealdice-deck`、`sealdice-sealpack` 技能。

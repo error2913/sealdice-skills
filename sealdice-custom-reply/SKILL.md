@@ -27,7 +27,7 @@ description: 海豹（SealDice）自定义回复编写与调试助手。覆盖 W
 
 ```yaml
 enable: true
-interval: 0              # 本文件回复间隔（秒）
+interval: 0              # 文件级回复间隔（秒，小于 2 按 2 处理）
 conditions: []           # 公共条件（v1.4.6+）：全部满足才检查本文件回复项
 items:
   - enable: true
@@ -65,7 +65,11 @@ desc: ""
 
 ## 4. 回复结果
 
-- resultType：`replyToSender`（回发送者）/ `replyGroup`（强制回群）/ `replyPerson`（强制私聊）。
+- resultType 取值（v1.6.0 源码验证，dice/ext_reply_logic.go）：
+  - `replyToSender` 直接回复发送者（最常用）
+  - `replyPrivate` 私聊回复（强制私聊）
+  - `replyGroup` 回群（强制群内回复）
+  - `runText` 执行豹语表达式，等同 `.text` 但不发送消息
 - 一个结果多条候选文本：随机抽取一条；`message` 第二项为该条权重。
 - 多个 results 依次执行，几个结果就发几条消息。
 - 文本支持：变量 `{$t玩家}`、掷骰 `{d100}`、执行块 `{% %}`、CQ 码、

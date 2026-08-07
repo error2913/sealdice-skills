@@ -2,7 +2,7 @@
 format_version = "1.0.0"
 
 [package]
-id = "your-name/your-plugin"   # 必填：author/package，两段各 ≤64 字符，只能含字母数字下划线连字符
+id = "your-name/your-plugin"   # 必填：author/package，两段各 ≤64 字符，仅限字母（含中文）/数字/下划线/连字符
 name = "你的插件名"             # 必填
 version = "1.0.0"              # 必填：语义化版本
 authors = ["你的名字"]

@@ -1,0 +1,4 @@
+interface:
+  display_name: "海豹插件开发助手"
+  short_description: "海豹（SealDice）JS 插件开发、工程模板与测试环境搭建"
+  default_prompt: "Use $sealdice-plugin-dev to write a SealDice JS plugin and set up the WebUI/QQ test environment."

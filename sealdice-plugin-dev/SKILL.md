@@ -22,6 +22,7 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 | 编写牌堆 / 抽牌内容 | 其他技能 | `sealdice-deck` |
 | 手动打包 / 发布扩展包（.sealpack） | 其他技能 | `sealdice-sealpack` |
 | 修改自定义文案（WebUI/API） | 其他技能 | `sealdice-custom-text` |
+| 跨插件暴露 / 调用 API | §2.11 | 本节（globalThis 模式） |
 
 不确定时：先读 `references/introduce.md` + `references/js_start.md`。
 
@@ -60,6 +61,25 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 8. 配置项：`seal.ext.registerStringConfig/IntConfig/FloatConfig/BoolConfig/TemplateConfig/OptionConfig`，读取对应 `getXxxConfig(ext, key)`；全部出现在 WebUI「插件设置」。
 9. 持久化：`ext.storageSet(key, string)` / `storageGet(key)`，**只接受字符串**，复杂结构用 `JSON.stringify/parse`。
 10. 定时任务：`seal.ext.registerTask(ext, 'daily', '08:30', fn, 'key', '描述')` 或 `cron`（5 位表达式）。
+
+11. 跨插件暴露 API：所有 JS 插件共享同一个 goja 全局环境，用 `globalThis` 暴露接口，
+    供其他插件调用（幂等，热重载不重复覆盖）：
+    ```js
+    // 提供方：暴露
+    if (!globalThis.myPluginApi) {
+      globalThis.myPluginApi = {
+        name: 'my-plugin',
+        version: '1.0.0',
+        hello(name) { return `你好，${name}`; },
+      };
+    }
+    // 使用方：调用前判空，兼容插件未安装的情况
+    const api = globalThis.myPluginApi;
+    if (!api) return;
+    const text = api.hello('世界');
+    ```
+    注意：命名空间要唯一（避免通用名冲突）；不要假设提供方先加载，调用时现取现判空；
+    提供方热重载后 `globalThis` 上的引用会更新，使用方每次调用时重新读取。
 
 常见陷阱：热重载重复注册（永远先 find）；`getArgN` 1-based；storage 只收字符串；别名复制对象导致回调丢失；私聊/群 ctx 不同，跨群发消息用 `seal.createTempCtx`；fetch 是异步的，结果用 `replyToSender` 后续推送；goja 无 DOM，npm 包先验证。
 

@@ -42,6 +42,13 @@
     `--headless=new --user-data-dir=<临时目录> --no-first-run`。
 13. **set_configs 需完整字段**：配置项要带 `key/type/defaultValue/value/description`，
     最好先 GET 再改 `value` 回传。
-14. **已设密码实例的 API 签入**：密码哈希由 WebUI 前端计算，核心只存哈希；脚本
-    `signin` 仅对未设密码（哈希为空）的新实例可用。已设密码的实例请用浏览器自动化
-    在 WebUI 表单中解锁（Chrome DevTools MCP），或把 `.env` 中的密码交给 UI 流程。
+14. **新版（1.6+）signin 不认明文密码**（最坑）：`POST /sd-api/signin {"password":"明文"}`
+    直接 400。正确流程：`GET /sd-api/signin/salt` 取盐 →
+    PBKDF2-SHA512(password, salt, 1000, 32) →
+    提交 `base64("v01" + salt(utf8) + [0x00,0x03,0xE8] + derived)` 作为 password。
+    实现见 `test-sealdice.ps1` 的 `Get-SealPasswordHash`（与
+    aiplugin4/.dev/sign-hash.mjs 对拍一致）；旧明文 signin 脚本在 1.6+ 会 400。
+    新装未设密码实例仍可用 `{"password":""}` 直签；或 `.env` 配
+    `SEALDICE_PANEL_TOKEN` 跳过 signin。
+15. **分支/PR 状态漂移**：操作期间 PR 可能被合并、远程分支被删，`git push` 会显示
+    new branch。每次操作前先 `git fetch` 并确认 PR 状态；合并后及时清理本地与远程分支。

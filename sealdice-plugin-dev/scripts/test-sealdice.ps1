@@ -33,6 +33,7 @@ if (-not $BaseUrl) {
 if (-not $Password) {
     $Password = if ($env:SEALDICE_PANEL_PASSWORD) { $env:SEALDICE_PANEL_PASSWORD } elseif ($envMap["SEALDICE_PANEL_PASSWORD"]) { $envMap["SEALDICE_PANEL_PASSWORD"] } else { "" }
 }
+$script:PanelToken = if ($env:SEALDICE_PANEL_TOKEN) { $env:SEALDICE_PANEL_TOKEN } elseif ($envMap["SEALDICE_PANEL_TOKEN"]) { $envMap["SEALDICE_PANEL_TOKEN"] } else { "" }
 
 if (-not $WorkDir) { $WorkDir = Join-Path $env:TEMP "sealdice-test-$PID" }
 New-Item -ItemType Directory -Path $WorkDir -Force | Out-Null
@@ -57,11 +58,40 @@ function Invoke-SealApi {
     try { return ($text | ConvertFrom-Json) } catch { return $text }
 }
 
+function Get-SealPasswordHash {
+    # 新版（1.6+）signin：PBKDF2-SHA512(password, salt, 1000, 32)，
+    # 提交 base64("v01" + salt(utf8) + [00 03 E8] + derived)，与 aiplugin4/.dev/sign-hash.mjs 等价
+    param([string]$Password, [string]$Salt)
+    $saltBytes = [System.Text.Encoding]::UTF8.GetBytes($Salt)
+    $pbkdf2 = [System.Security.Cryptography.Rfc2898DeriveBytes]::new($Password, $saltBytes, 1000, [System.Security.Cryptography.HashAlgorithmName]::SHA512)
+    $derived = $pbkdf2.GetBytes(32)
+    $ms = [System.IO.MemoryStream]::new()
+    $bw = [System.IO.BinaryWriter]::new($ms)
+    $bw.Write([System.Text.Encoding]::Latin1.GetBytes("v01"))
+    $bw.Write($saltBytes)
+    $bw.Write([byte[]](0x00, 0x03, 0xE8))
+    $bw.Write($derived)
+    $bw.Flush()
+    return [Convert]::ToBase64String($ms.ToArray())
+}
+
 function Connect-Seal {
     Write-Host "[env] BaseUrl=$BaseUrl"
-    $body = @{ password = $Password } | ConvertTo-Json
-    $r = curl.exe -sf -X POST -H "Content-Type: application/json" --data-binary $body "$BaseUrl/sd-api/signin" | ConvertFrom-Json
-    $script:Token = $r.token
+    if ($script:PanelToken) {
+        # .env 已提供解锁 token 时直接使用，跳过 signin
+        $script:Token = $script:PanelToken
+        Write-Host "[ok] 使用 SEALDICE_PANEL_TOKEN"
+    } elseif (-not $Password) {
+        # 新装未设密码实例：空密码直接签入
+        $r = curl.exe -sf -X POST -H "Content-Type: application/json" --data-binary '{"password":""}' "$BaseUrl/sd-api/signin" | ConvertFrom-Json
+        $script:Token = $r.token
+    } else {
+        # 新版（1.6+）不认明文密码：先取盐再提交 PBKDF2 哈希
+        $salt = (curl.exe -sf "$BaseUrl/sd-api/signin/salt" | ConvertFrom-Json).salt
+        $hash = Get-SealPasswordHash -Password $Password -Salt $salt
+        $r = curl.exe -sf -X POST -H "Content-Type: application/json" --data-binary (@{ password = $hash } | ConvertTo-Json -Compress) "$BaseUrl/sd-api/signin" | ConvertFrom-Json
+        $script:Token = $r.token
+    }
     if (-not $script:Token) { throw "signin 失败" }
     # 新装海豹自定义回复总开关默认关闭，需要打开（幂等）
     curl.exe -sf -X POST -H "authorization: $script:Token" -H "token: $script:Token" -H "Content-Type: application/json" --data-binary '{"customReplyConfigEnable":true}' "$BaseUrl/sd-api/dice/config/set" | Out-Null

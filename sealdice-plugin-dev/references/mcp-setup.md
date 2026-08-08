@@ -128,6 +128,13 @@ python scripts\verify.py http://127.0.0.1:8888 <MCP_ACCESS_TOKEN>
 - 所有示例使用占位符；不要把 `.env`、`messages.log`、运行日志提交或外发。
 - `QQ_MCP_LOG_MESSAGE_CONTENT` 保持 `false`。
 
+### 1.11 MCP Streamable HTTP 调用要点（实测）
+
+- 会话 id 在响应头 `Mcp-Session-Id`，不在响应 body 里；后续请求需要带上该头。
+- `initialize` 请求必须带 `Accept: application/json, text/event-stream`。
+- 访问 token 从 `~/.codex/config.toml` 的 `[mcp_servers.QQ-MCP-Server] http_headers`
+  读取（`Authorization: Bearer <QQ_MCP_ACCESS_TOKEN>`）。
+
 ## 2. Chrome DevTools MCP（Chrome / Edge）
 
 ### 2.1 简介

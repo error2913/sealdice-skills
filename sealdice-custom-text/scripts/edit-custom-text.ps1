@@ -31,9 +31,33 @@ if (-not $BaseUrl) {
     $BaseUrl = if ($env:SEALDICE_PANEL_URL) { $env:SEALDICE_PANEL_URL } elseif ($envMap["SEALDICE_PANEL_URL"]) { $envMap["SEALDICE_PANEL_URL"] } else { "http://127.0.0.1:3211" }
 }
 $password = if ($env:SEALDICE_PANEL_PASSWORD) { $env:SEALDICE_PANEL_PASSWORD } elseif ($envMap["SEALDICE_PANEL_PASSWORD"]) { $envMap["SEALDICE_PANEL_PASSWORD"] } else { "" }
+$panelToken = if ($env:SEALDICE_PANEL_TOKEN) { $env:SEALDICE_PANEL_TOKEN } elseif ($envMap["SEALDICE_PANEL_TOKEN"]) { $envMap["SEALDICE_PANEL_TOKEN"] } else { "" }
 
-$token = (curl.exe -sf -X POST -H "Content-Type: application/json" --data-binary (@{ password = $password } | ConvertTo-Json) "$BaseUrl/sd-api/signin" | ConvertFrom-Json).token
-if (-not $token) { throw "signin 失败（已设密码实例需先在 WebUI 解锁，见 sealdice-plugin-dev 的 test-notes.md）" }
+function Get-SealPasswordHash {
+    param([string]$Password, [string]$Salt)
+    $saltBytes = [System.Text.Encoding]::UTF8.GetBytes($Salt)
+    $pbkdf2 = [System.Security.Cryptography.Rfc2898DeriveBytes]::new($Password, $saltBytes, 1000, [System.Security.Cryptography.HashAlgorithmName]::SHA512)
+    $derived = $pbkdf2.GetBytes(32)
+    $ms = [System.IO.MemoryStream]::new()
+    $bw = [System.IO.BinaryWriter]::new($ms)
+    $bw.Write([System.Text.Encoding]::Latin1.GetBytes("v01"))
+    $bw.Write($saltBytes)
+    $bw.Write([byte[]](0x00, 0x03, 0xE8))
+    $bw.Write($derived)
+    $bw.Flush()
+    return [Convert]::ToBase64String($ms.ToArray())
+}
+
+if ($panelToken) {
+    $token = $panelToken
+} elseif (-not $password) {
+    $token = (curl.exe -sf -X POST -H "Content-Type: application/json" --data-binary '{"password":""}' "$BaseUrl/sd-api/signin" | ConvertFrom-Json).token
+} else {
+    $salt = (curl.exe -sf "$BaseUrl/sd-api/signin/salt" | ConvertFrom-Json).salt
+    $hash = Get-SealPasswordHash -Password $password -Salt $salt
+    $token = (curl.exe -sf -X POST -H "Content-Type: application/json" --data-binary (@{ password = $hash } | ConvertTo-Json -Compress) "$BaseUrl/sd-api/signin" | ConvertFrom-Json).token
+}
+if (-not $token) { throw "signin 失败（新版海豹不认明文密码，脚本已按 PBKDF2 流程处理；也可在 .env 配 SEALDICE_PANEL_TOKEN 直连）" }
 
 function Get-Texts {
     $raw = curl.exe -s -H "authorization: $token" -H "token: $token" "$BaseUrl/sd-api/configs/customText"

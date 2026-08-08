@@ -1,14 +1,20 @@
 // ==UserScript==
-// @name 插件名（必填）
-// @author 作者名（必填）
-// @version 1.0.0
-// @description 插件功能描述
-// @timestamp 2026-06-05
-// @license MIT
-// @homepageURL https://github.com/yourname/your-plugin
-// @sealVersion 1.4.5
-// @depends OtherAuthor:OtherPlugin:>=1.0.0
+// @name         插件名（必填）
+// @author       作者名（必填）
+// @version      1.0.0（必填，建议语义化版本号）
+// @description  插件功能描述
+// @timestamp    2026-08-08（unix 秒或 YYYY-MM-DD）
+// @license      MIT
+// @homepageURL  https://github.com/yourname/your-plugin
+// @sealVersion  1.4.5（目标海豹版本；不需要可整行删除）
 // ==/UserScript==
+
+// === 可选元数据（需要时取消注释并替换为真实值）===
+// 以下两行位于 ==/UserScript== 之后，不会被海豹当作元数据解析，
+// 取消注释后须放回 ==UserScript== 块内。
+// @depends 作者:插件名[:版本约束]      依赖其他插件（可多行，缺失或版本不符时拒载本插件）
+// @updateUrl https://raw.githubusercontent.com/你的用户名/仓库名/分支名/路径/插件.js
+//           git 仓库更新链接（raw 文件直链，可多行；WebUI「更新」按钮拉取并对比）
 
 // seal.d.ts 位于本技能 references/ 目录；把本文件复制到你的项目后，
 // 若把 seal.d.ts 放在同一目录，可将下面这行改为 ./seal.d.ts

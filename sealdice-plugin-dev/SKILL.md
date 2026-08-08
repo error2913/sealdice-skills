@@ -44,7 +44,11 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 
 直接复制 `assets/plugin-template.js` 作为骨架，然后：
 
-1. 改元数据头（`// ==UserScript==`）：`@name`、`@author`、`@version` 必填；可选 `@description`、`@timestamp`、`@license`、`@homepageURL`、`@depends`（`作者:插件名[:版本约束]`）、`@sealVersion`。
+1. 改元数据头（`// ==UserScript==`）：`@name`、`@author`、`@version` 必填；可选
+   `@description`、`@timestamp`（unix 秒或 YYYY-MM-DD）、`@license`、`@homepageURL`、
+   `@depends`（`作者:插件名[:版本约束]`，可多行）、`@sealVersion`（目标海豹版本）、
+   `@updateUrl`（更新链接，可多行）、`@etag`。注意：`@depends`/`@updateUrl` 示例
+   不要原样保留，`@depends` 指向不存在的插件会导致拒载。
 2. 扩展注册三件套（热重载安全，务必先 find 后 new）：
    ```js
    let ext = seal.ext.find('ext_name');
@@ -83,6 +87,16 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
     `// @depends 作者:插件名[:版本约束]`（可多行，AND），海豹会保证提供方先注册、
     缺失或版本不符时拒绝加载本插件；调用时仍建议判空做防御；提供方热重载后
     `globalThis` 上的引用会更新，使用方每次调用时重新读取。
+
+12. 更新链接（放在 git 仓库时）：在元数据头写 `// @updateUrl <URL>`（可多行，海豹
+    会从上到下逐一检查更新）。git 仓库用 **raw 文件直链**，保证 URL 直接返回 JS 文件
+    内容，例如：
+    ```text
+    // @updateUrl https://raw.githubusercontent.com/<owner>/<repo>/<branch>/<path>/plugin.js
+    ```
+    WebUI 插件卡片的「更新」按钮会拉取最新内容并展示差异（对应 API：
+    `POST /js/check_update` + `POST /js/update`），确认后替换并重载；可选 `@etag`
+    用于 HTTP 304 缓存协商。
 
 常见陷阱：热重载重复注册（永远先 find）；`getArgN` 1-based；storage 只收字符串；别名复制对象导致回调丢失；私聊/群 ctx 不同，跨群发消息用 `seal.createTempCtx`；fetch 是异步的，结果用 `replyToSender` 后续推送；goja 无 DOM，npm 包先验证。
 

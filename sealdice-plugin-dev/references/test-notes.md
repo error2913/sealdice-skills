@@ -50,5 +50,3 @@
     aiplugin4/.dev/sign-hash.mjs 对拍一致）；旧明文 signin 脚本在 1.6+ 会 400。
     新装未设密码实例仍可用 `{"password":""}` 直签；或 `.env` 配
     `SEALDICE_PANEL_TOKEN` 跳过 signin。
-15. **分支/PR 状态漂移**：操作期间 PR 可能被合并、远程分支被删，`git push` 会显示
-    new branch。每次操作前先 `git fetch` 并确认 PR 状态；合并后及时清理本地与远程分支。

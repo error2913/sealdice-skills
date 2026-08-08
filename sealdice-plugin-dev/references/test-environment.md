@@ -81,18 +81,9 @@
 - 鉴权：`POST /sd-api/signin` 换取 token；后续所有 `/sd-api/*` 请求带
   `authorization` 与 `token` 两个请求头（值相同）。
 - 日志：`GET /sd-api/log/fetchAndClear`（会清空缓冲）。
-- 面板自动化：若本机已安装 `aiplugin4-test-suite` 技能，可直接复用其
-  `scripts/panel.mjs`：
-  ```powershell
-  $env:SEALDICE_PANEL_URL = "http://<host>:3211"
-  $env:SEALDICE_PANEL_PASSWORD = "<密码>"
-  node panel.mjs unlock
-  node panel.mjs upload-reload --file dist/your-plugin.js
-  node panel.mjs logs --limit 50
-  node panel.mjs screenshot --route /mod/js
-  ```
-  支持命令：`unlock|logs|open-js|plugins|screenshot|inspect|click|set-input|
-  steps|reload|upload-reload`。
+- 面板自动化（推荐）：安装 Chrome DevTools MCP（支持 Chrome / Edge）后，由 Codex
+  直接驱动浏览器完成解锁、上传插件、点击「重载 JS」、截图与读取控制台/日志；
+  详细安装见 `references/mcp-setup.md`。
 
 安全与纪律：
 
@@ -117,7 +108,7 @@ Codex(MCP 客户端) -> QQ-MCP-Server (:8888/mcp) -> NapCatQQ OneBot (HTTP/WS) -
 - NapCatQQ 已登录，并启用 OneBot Server（HTTP 或 WebSocket，消息格式建议 Array）。
 - 目标机器能访问 NapCat 地址与端口。
 
-### 安装（简版，详见 qqmcp-install 技能）
+### 安装（详细步骤见 `references/mcp-setup.md`）
 
 ```powershell
 git clone https://github.com/print-yuhuan/QQ-MCP-Server.git   # 若 404 用本机兼容实现

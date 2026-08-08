@@ -15,6 +15,7 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 | 参考实战写法（HTTP、图片、长流程等） | §5 | `references/js_example.md` |
 | 自定义规则模板（GameSystem） | §5 | `references/js_gamesystem.md` |
 | 搭建测试环境 / 指令测试 / 连接 WebUI / QQ 验证 | §4 | `references/test-environment.md` |
+| 安装 QQ-MCP / Chrome DevTools MCP（Chrome/Edge） | §4 | `references/mcp-setup.md` |
 | WebUI 中如何管理 JS 插件 | §4 | `references/config_jsscript.md` |
 | 编写自定义回复（关键词自动回复） | 其他技能 | `sealdice-custom-reply` |
 | 编写牌堆 / 抽牌内容 | 其他技能 | `sealdice-deck` |
@@ -95,8 +96,8 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 
 - 手工：浏览器打开 `http://<host>:3211` → 解锁 → `#/mod/js` 上传/重载 → 指令测试或真实平台验证。
 - 接口：`POST /sd-api/signin` 拿 token，后续请求带 `authorization` 与 `token` 两个头；日志 `GET /sd-api/log/fetchAndClear`（会清空缓冲）。
-- 自动化（可选）：若本机已安装 `aiplugin4-test-suite`，复用其 `scripts/panel.mjs`：
-  `SEALDICE_PANEL_URL` / `SEALDICE_PANEL_PASSWORD` 环境变量 + `unlock|logs|open-js|plugins|screenshot|upload-reload|reload` 命令。
+- 自动化（可选）：安装 Chrome DevTools MCP（支持 Chrome / Edge）后，可直接驱动浏览器
+  完成解锁、上传、重载、截图与日志读取；详细安装与配置见 `references/mcp-setup.md`。
 
 ### 4.4 QQ 环境测试（qqmcp）
 
@@ -104,6 +105,7 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 - 工具：`qq_send_group_message` 发指令（支持 CQ 码）、`qq_get_group_messages` 轮询回复、`qq_get_group_members` 确认机器人、`qq_get_bot_status` 预检。
 - 流程：预检 → 发送并记录时间 → 每 2~3 秒轮询（最长 45 秒）→ 按 `user_id`+时间过滤机器人回复 → 关键字子串断言。
 - 纪律：相邻指令 ≥ 3 秒、每 5 条暂停 10 秒、群里少发（以验证连通为主）、破坏性操作先获用户确认。
+- 详细安装（源码、.env、注册 Codex、验证）见 `references/mcp-setup.md`。
 
 ## 5. API 速查
 
@@ -134,6 +136,7 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 | 文件 | 内容 |
 |---|---|
 | `references/test-environment.md` | 测试环境完整流程（下载海豹 / WebUI / 指定 WebUI / qqmcp） |
+| `references/mcp-setup.md` | QQ-MCP 与 Chrome DevTools MCP（Chrome/Edge）详细安装与配置 |
 | `references/js_start.md` | 单文件 JS 入门（元数据、最小示例、依赖与版本） |
 | `references/js_project.md` | TypeScript 工程模板 |
 | `references/js_example.md` | 1300+ 行实战示例（HTTP、图片、跨群联动、长流程） |

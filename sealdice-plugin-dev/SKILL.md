@@ -100,6 +100,17 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 
 ## 4. 搭建测试环境（下载海豹 / WebUI / 指定 WebUI / QQ）
 
+### 4.0 测试前确认（已配置则直接使用，不重复询问）
+
+动手前先检查是否已有可用配置：
+
+1. 用**全新海豹实例**测试，还是连接**现有 WebUI**？若已有 `SEALDICE_PANEL_URL` /
+   `SEALDICE_PANEL_PASSWORD` 环境变量，或本会话已提供地址/密码，直接使用现有 WebUI。
+2. 现有 WebUI：地址（如 `http://host:3211`）与解锁密码**未配置时**才向用户索取。
+3. QQ 环境（qqmcp）：若 `QQ-MCP-Server` 已注册（MCP 工具可用），或 qqmcp `.env`
+   已有 `NAPCAT_BASE_URL` / `NAPCAT_ACCESS_TOKEN`，直接使用；**未配置时**才向用户
+   索取 NapCat WebSocket 地址与访问 token。
+
 完整流程与命令见 `references/test-environment.md`。要点：
 
 ### 4.1 下载并运行海豹核心

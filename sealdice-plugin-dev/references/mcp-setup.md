@@ -24,6 +24,10 @@ Codex(MCP 客户端) -> QQ-MCP-Server (:8888/mcp) -> NapCatQQ OneBot (HTTP/WS) -
 - NapCatQQ 已登录，并启用 OneBot Server（HTTP 或 WebSocket，消息格式建议 Array）。
 - 目标机器能访问 NapCat 的地址与端口。
 
+使用 qqmcp 前先检查是否已配置：`~/.codex/config.toml` 已注册 `QQ-MCP-Server`
+（MCP 工具可用），或 qqmcp 项目 `.env` 已有 `NAPCAT_BASE_URL` /
+`NAPCAT_ACCESS_TOKEN` 时**直接使用，不再询问**；未配置才向用户索取这两个值。
+
 ### 1.2 获取源码
 
 ```powershell

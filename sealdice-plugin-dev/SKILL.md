@@ -13,6 +13,7 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 | 大型插件 / TypeScript 工程化 | §3 工程模板 | `references/js_project.md` |
 | 查某个 `seal.*` API | §5 API 速查 | `references/seal.d.ts`（最权威）、`references/js_api_list.md` |
 | 参考实战写法（HTTP、图片、长流程等） | §5 | `references/js_example.md` |
+| 引用消息（回复）匹配与操作 | §5 | `references/js_quote_reply.md` |
 | 自定义规则模板（GameSystem） | §5 | `references/js_gamesystem.md` |
 | 搭建测试环境 / 指令测试 / 连接 WebUI / QQ 验证 | §4 | `references/test-environment.md` |
 | 安装 QQ-MCP / Chrome DevTools MCP（Chrome/Edge） | §4 | `references/mcp-setup.md` |
@@ -217,6 +218,7 @@ JS 插件（安装/重载/配置查看修改/指令测试/日志/删除）、自
 | `references/js_example.md` | 1300+ 行实战示例（HTTP、图片、跨群联动、长流程） |
 | `references/js_api_list.md` | 平铺式 API 列表 |
 | `references/seal.d.ts` | 类型定义（最权威 API 索引） |
+| `references/js_quote_reply.md` | 引用消息（`[CQ:reply,id=...]`）匹配模式实战 |
 | `references/js_gamesystem.md` | 自定义规则模板 |
 | `references/config_jsscript.md` | WebUI JS 插件管理 |
 | `references/introduce.md` | 官方进阶章节总览 |

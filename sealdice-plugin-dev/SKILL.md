@@ -73,13 +73,16 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
         hello(name) { return `你好，${name}`; },
       };
     }
-    // 使用方：调用前判空，兼容插件未安装的情况
+    // 使用方：在插件元数据头声明依赖（保证提供方先加载，缺失/版本不符时拒载本插件）
+    // // @depends 作者:提供方插件名:>=1.0.0
     const api = globalThis.myPluginApi;
-    if (!api) return;
+    if (!api) return;   // 防御性判空（例如依赖声明缺失或版本不符时）
     const text = api.hello('世界');
     ```
-    注意：命名空间要唯一（避免通用名冲突）；不要假设提供方先加载，调用时现取现判空；
-    提供方热重载后 `globalThis` 上的引用会更新，使用方每次调用时重新读取。
+    注意：命名空间要唯一（避免通用名冲突）；使用方必须在 header 里声明
+    `// @depends 作者:插件名[:版本约束]`（可多行，AND），海豹会保证提供方先注册、
+    缺失或版本不符时拒绝加载本插件；调用时仍建议判空做防御；提供方热重载后
+    `globalThis` 上的引用会更新，使用方每次调用时重新读取。
 
 常见陷阱：热重载重复注册（永远先 find）；`getArgN` 1-based；storage 只收字符串；别名复制对象导致回调丢失；私聊/群 ctx 不同，跨群发消息用 `seal.createTempCtx`；fetch 是异步的，结果用 `replyToSender` 后续推送；goja 无 DOM，npm 包先验证。
 

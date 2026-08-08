@@ -134,8 +134,9 @@ QQ_MCP_LISTEN_GROUPS=<GROUP_ID>                    # 可选，逗号分隔
 # 端点 http://<HOST>:8888/mcp，健康检查 http://<HOST>:8888/health
 ```
 
-注册到 Codex：在 `~/.codex/config.toml` 添加 `type = "http"` 的
-`mcp_servers.QQ-MCP-Server`（`http_headers` 带 token），改完重启 Codex。
+注册到 MCP 客户端（以 Codex 为例）：在 `~/.codex/config.toml` 添加 `type = "http"` 的
+`mcp_servers.QQ-MCP-Server`（`http_headers` 带 token）；Claude Desktop / Cursor /
+Cline 等客户端的字段结构相同，改完重启客户端。
 
 ### 工具清单
 

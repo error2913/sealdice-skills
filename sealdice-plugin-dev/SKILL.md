@@ -16,10 +16,12 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 | 自定义规则模板（GameSystem） | §5 | `references/js_gamesystem.md` |
 | 搭建测试环境 / 指令测试 / 连接 WebUI / QQ 验证 | §4 | `references/test-environment.md` |
 | 安装 QQ-MCP / Chrome DevTools MCP（Chrome/Edge） | §4 | `references/mcp-setup.md` |
+| 端到端测试脚本（安装/重载/日志/配置/删除/指令测试） | §4 | `scripts/test-sealdice.ps1`、`scripts/screenshot.ps1` |
 | WebUI 中如何管理 JS 插件 | §4 | `references/config_jsscript.md` |
 | 编写自定义回复（关键词自动回复） | 其他技能 | `sealdice-custom-reply` |
 | 编写牌堆 / 抽牌内容 | 其他技能 | `sealdice-deck` |
 | 手动打包 / 发布扩展包（.sealpack） | 其他技能 | `sealdice-sealpack` |
+| 修改自定义文案（WebUI/API） | 其他技能 | `sealdice-custom-text` |
 
 不确定时：先读 `references/introduce.md` + `references/js_start.md`。
 
@@ -33,6 +35,9 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 
 术语约定（本套技能统一）：WebUI 页面名「JS 扩展」与「JS 插件」同义；「扩展包」是
 `.sealpack` 的正式名称，「豹包」是俗称；牌堆=文件，牌组=可抽取项，牌堆项=其中一条内容。
+
+通用性：本套技能面向任意 AI 编码代理（Codex / Claude / Cursor 等），脚本与 API 用法
+不绑定特定代理；MCP 注册章节以 Codex 配置为例，其他客户端的配置见 `references/mcp-setup.md`。
 
 ## 2. 方式一：单文件 JS 插件
 
@@ -107,6 +112,19 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 - 纪律：相邻指令 ≥ 3 秒、每 5 条暂停 10 秒、群里少发（以验证连通为主）、破坏性操作先获用户确认。
 - 详细安装（源码、.env、注册 Codex、验证）见 `references/mcp-setup.md`。
 
+### 4.5 一键端到端测试
+
+`scripts/test-sealdice.ps1` 可对本地/远程实例跑完整回归：
+JS 插件（安装/重载/配置查看修改/指令测试/日志/删除）、自定义回复、牌堆、自定义文案、
+扩展包安装。用法：
+
+```powershell
+.\scripts\test-sealdice.ps1 -BaseUrl http://127.0.0.1:3211 -Only all
+```
+
+截图用 `scripts/screenshot.ps1`（Edge/Chrome 无头模式）。实测结论与踩坑见
+`references/test-notes.md`。
+
 ## 5. API 速查
 
 权威来源：`references/seal.d.ts`（全文 grep）；平铺列表 `references/js_api_list.md`；实战例子 `references/js_example.md`。
@@ -137,6 +155,8 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 |---|---|
 | `references/test-environment.md` | 测试环境完整流程（下载海豹 / WebUI / 指定 WebUI / qqmcp） |
 | `references/mcp-setup.md` | QQ-MCP 与 Chrome DevTools MCP（Chrome/Edge）详细安装与配置 |
+| `references/dicescript.md` | 豹语（DiceScript）语法与四类内容编写指导 |
+| `references/test-notes.md` | 端到端实测结论与踩坑记录 |
 | `references/js_start.md` | 单文件 JS 入门（元数据、最小示例、依赖与版本） |
 | `references/js_project.md` | TypeScript 工程模板 |
 | `references/js_example.md` | 1300+ 行实战示例（HTTP、图片、跨群联动、长流程） |

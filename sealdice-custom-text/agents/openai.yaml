@@ -1,0 +1,4 @@
+interface:
+  display_name: "海豹自定义文案助手"
+  short_description: "海豹自定义文案修改与调试：WebUI 与 API"
+  default_prompt: "Use $sealdice-custom-text to modify and verify a SealDice custom text."

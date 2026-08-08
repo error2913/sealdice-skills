@@ -7,7 +7,10 @@
 2. **Chrome DevTools MCP**：让 Codex 控制 Chrome / Edge 浏览器，用于 WebUI 面板
    自动化（解锁、上传插件、重载、截图、读取控制台与日志）。
 
-两个服务都通过 `~/.codex/config.toml` 的 `[mcp_servers]` 注册，改完**重启 Codex** 生效。
+两个服务都通过 MCP 客户端配置注册，改完**重启客户端**生效。示例以 Codex
+（`~/.codex/config.toml` 的 `[mcp_servers]`）为准；其他客户端对应：
+Claude Desktop（`claude_desktop_config.json` 的 `mcpServers`）、
+Cursor（`.cursor/mcp.json`）、Cline（`mcp_settings.json`），字段结构相同。
 
 ## 1. QQ-MCP-Server（qqmcp）
 
@@ -68,7 +71,7 @@ QQ_MCP_LISTEN_GROUPS=<GROUP_ID>      # 可选，逗号分隔多个群
 - MCP 端点：`http://<HOST>:8888/mcp`
 - 健康检查：`http://<HOST>:8888/health`，预期返回 `{"ok": true, ...}`
 
-### 1.6 注册到 Codex
+### 1.6 注册到 MCP 客户端
 
 在 `~/.codex/config.toml` 添加（token 用真实值替换）：
 
@@ -79,7 +82,7 @@ url = "http://127.0.0.1:8888/mcp"
 http_headers = { Authorization = "Bearer <MCP_ACCESS_TOKEN>" }
 ```
 
-改完重启 Codex。
+改完重启 MCP 客户端（Codex / Claude / Cursor / Cline 等）。
 
 ### 1.7 验证
 
@@ -147,7 +150,7 @@ npx.cmd -y chrome-devtools-mcp@latest --help
 
 也可以全局安装：`npm install -g chrome-devtools-mcp`。
 
-### 2.4 注册到 Codex
+### 2.4 注册到 MCP 客户端
 
 在 `~/.codex/config.toml` 添加：
 
@@ -208,7 +211,7 @@ args = [
 
 ### 2.6 验证
 
-重启 Codex 后，调用浏览器工具做一次冒烟测试：打开海豹 WebUI
+重启 MCP 客户端后，调用浏览器工具做一次冒烟测试：打开海豹 WebUI
 （如 `http://127.0.0.1:3211/#/home`）并截图。
 
 常见问题：
@@ -235,5 +238,5 @@ args = [
 |---|---|
 | `MCP_AUTH_FAILED` | 检查 `~/.codex/config.toml` 中对应服务的 token |
 | `NAPCAT_REQUEST_FAILED` | NapCat 掉线或 WS 未连接 |
-| Codex 里看不到 MCP 工具 | 重启 Codex；检查 config.toml 语法与 `type`（http/stdio） |
+| 客户端里看不到 MCP 工具 | 重启客户端；检查配置语法与 `type`（http/stdio） |
 | 浏览器工具报错 | 检查 `--executablePath`、`--headless`、`--isolated` 组合 |

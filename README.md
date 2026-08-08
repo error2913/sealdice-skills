@@ -1,7 +1,8 @@
 # sealdice-skills
 
-海豹（SealDice）插件开发技能合集：面向 Codex 的可复用技能（Skills），覆盖 JS 插件开发与测试、
-自定义回复、牌堆编写、`.sealpack` 扩展包手动打包。
+海豹（SealDice）插件开发技能合集：面向 AI 编码代理（Codex / Claude / Cursor 等）的
+可复用技能（Skills）与测试脚本，覆盖 JS 插件开发与测试、自定义回复、牌堆编写、
+自定义文案、`.sealpack` 扩展包手动打包。
 
 内容依据官方手册（sealdice/sealdice-manual-next）与海豹核心 v1.6.0 源码逐项校验；
 `seal.d.ts` 以 sealdice/sealdice-js-ext-template 仓库最新版为准。

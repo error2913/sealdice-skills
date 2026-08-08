@@ -7,12 +7,19 @@
 动手前先检查是否已有配置，**已配置不再询问**，未配置才向用户索取：
 
 1. 全新实例 vs 现有 WebUI：若已有 `SEALDICE_PANEL_URL` / `SEALDICE_PANEL_PASSWORD`
-   环境变量，或本会话已提供地址/密码，直接使用现有 WebUI；否则询问用户。
+   环境变量，或技能目录 `sealdice-plugin-dev/.env`（模板见 `.env.example`）、或本会话
+   已提供地址/密码，直接使用现有 WebUI；否则询问用户。
 2. 现有 WebUI：向用户索取地址（如 `http://host:3211`）与解锁密码，
    对应脚本参数 `-BaseUrl <地址> -Password <密码>`。
 3. qqmcp：若 `~/.codex/config.toml` 已注册 `QQ-MCP-Server`（MCP 工具可用），或
-   qqmcp 项目 `.env` 已有 `NAPCAT_BASE_URL` / `NAPCAT_ACCESS_TOKEN`，直接使用；
-   否则向用户索取 NapCat WebSocket 地址与访问 token，写入 `.env`。
+   qqmcp 项目 `.env` / `sealdice-plugin-dev/.env` 已有 `NAPCAT_BASE_URL` /
+   `NAPCAT_ACCESS_TOKEN`，直接使用；否则向用户索取 NapCat WebSocket 地址与访问
+   token，写入 `.env`。
+
+`.env` 字段：`SEALDICE_PANEL_URL`（WebUI 地址含端口）、`SEALDICE_PANEL_PASSWORD`
+（解锁密码）、`NAPCAT_BASE_URL`（ws 地址）、`NAPCAT_ACCESS_TOKEN`（token）；
+复制 `sealdice-plugin-dev/.env.example` 为 `.env` 填写即可，`.env` 不提交。
+`test-sealdice.ps1` / `edit-custom-text.ps1` 会自动读取前两项。
 
 ## 1. 下载并运行海豹核心
 

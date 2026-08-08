@@ -26,7 +26,8 @@ Codex(MCP 客户端) -> QQ-MCP-Server (:8888/mcp) -> NapCatQQ OneBot (HTTP/WS) -
 
 使用 qqmcp 前先检查是否已配置：`~/.codex/config.toml` 已注册 `QQ-MCP-Server`
 （MCP 工具可用），或 qqmcp 项目 `.env` 已有 `NAPCAT_BASE_URL` /
-`NAPCAT_ACCESS_TOKEN` 时**直接使用，不再询问**；未配置才向用户索取这两个值。
+`NAPCAT_ACCESS_TOKEN`，或 `sealdice-plugin-dev/.env`（模板 `.env.example`）已配置
+这两项时**直接使用，不再询问**；未配置才向用户索取这两个值。
 
 ### 1.2 获取源码
 

@@ -3,13 +3,37 @@
 #   .\scripts\test-sealdice.ps1 -BaseUrl http://127.0.0.1:3211 [-Only js|reply|deck|text|package|all] [-WorkDir <临时目录>]
 # 前置: 本地已运行海豹核心（v1.6.0+），WebUI 默认端口 3211；新装实例免密码可直接签入。
 param(
-    [string]$BaseUrl = "http://127.0.0.1:3211",
+    [string]$BaseUrl = "",
     [string]$Password = "",
     [ValidateSet("js", "reply", "deck", "text", "package", "all")] [string]$Only = "all",
     [string]$WorkDir = ""
 )
 
 $ErrorActionPreference = "Stop"
+function Read-DotEnv {
+    param([string]$Path)
+    $map = @{}
+    if (Test-Path -LiteralPath $Path) {
+        foreach ($line in Get-Content -LiteralPath $Path) {
+            $t = $line.Trim()
+            if ($t -and -not $t.StartsWith("#")) {
+                $i = $t.IndexOf("=")
+                if ($i -gt 0) { $map[$t.Substring(0, $i).Trim()] = $t.Substring($i + 1).Trim() }
+            }
+        }
+    }
+    return $map
+}
+
+# 从技能目录 .env 读取凭据（已有配置直接使用，未配置才用默认/询问）
+$envMap = Read-DotEnv (Join-Path $PSScriptRoot "..\.env")
+if (-not $BaseUrl) {
+    $BaseUrl = if ($env:SEALDICE_PANEL_URL) { $env:SEALDICE_PANEL_URL } elseif ($envMap["SEALDICE_PANEL_URL"]) { $envMap["SEALDICE_PANEL_URL"] } else { "http://127.0.0.1:3211" }
+}
+if (-not $Password) {
+    $Password = if ($env:SEALDICE_PANEL_PASSWORD) { $env:SEALDICE_PANEL_PASSWORD } elseif ($envMap["SEALDICE_PANEL_PASSWORD"]) { $envMap["SEALDICE_PANEL_PASSWORD"] } else { "" }
+}
+
 if (-not $WorkDir) { $WorkDir = Join-Path $env:TEMP "sealdice-test-$PID" }
 New-Item -ItemType Directory -Path $WorkDir -Force | Out-Null
 $script:Token = ""
@@ -34,6 +58,7 @@ function Invoke-SealApi {
 }
 
 function Connect-Seal {
+    Write-Host "[env] BaseUrl=$BaseUrl"
     $body = @{ password = $Password } | ConvertTo-Json
     $r = curl.exe -sf -X POST -H "Content-Type: application/json" --data-binary $body "$BaseUrl/sd-api/signin" | ConvertFrom-Json
     $script:Token = $r.token

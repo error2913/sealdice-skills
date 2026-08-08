@@ -3,7 +3,7 @@
 #   .\scripts\edit-custom-text.ps1 -BaseUrl http://127.0.0.1:3211 -Category COC -Key 判定_大失败 -NewText "新文案"
 # 说明: 保存会整类覆盖，脚本会自动整类回传；结束后恢复原值。
 param(
-    [string]$BaseUrl = "http://127.0.0.1:3211",
+    [string]$BaseUrl = "",
     [string]$Category = "COC",
     [string]$Key = "",
     [string]$NewText = "",
@@ -11,8 +11,29 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$token = (curl.exe -sf -X POST -H "Content-Type: application/json" --data-binary '{"password":""}' "$BaseUrl/sd-api/signin" | ConvertFrom-Json).token
-if (-not $token) { throw "signin 失败（若实例已设密码，请先手动在 WebUI 登录或在脚本中处理密码哈希）" }
+function Read-DotEnv {
+    param([string]$Path)
+    $map = @{}
+    if (Test-Path -LiteralPath $Path) {
+        foreach ($line in Get-Content -LiteralPath $Path) {
+            $t = $line.Trim()
+            if ($t -and -not $t.StartsWith("#")) {
+                $i = $t.IndexOf("=")
+                if ($i -gt 0) { $map[$t.Substring(0, $i).Trim()] = $t.Substring($i + 1).Trim() }
+            }
+        }
+    }
+    return $map
+}
+
+$envMap = Read-DotEnv (Join-Path $PSScriptRoot "..\..\sealdice-plugin-dev\.env")
+if (-not $BaseUrl) {
+    $BaseUrl = if ($env:SEALDICE_PANEL_URL) { $env:SEALDICE_PANEL_URL } elseif ($envMap["SEALDICE_PANEL_URL"]) { $envMap["SEALDICE_PANEL_URL"] } else { "http://127.0.0.1:3211" }
+}
+$password = if ($env:SEALDICE_PANEL_PASSWORD) { $env:SEALDICE_PANEL_PASSWORD } elseif ($envMap["SEALDICE_PANEL_PASSWORD"]) { $envMap["SEALDICE_PANEL_PASSWORD"] } else { "" }
+
+$token = (curl.exe -sf -X POST -H "Content-Type: application/json" --data-binary (@{ password = $password } | ConvertTo-Json) "$BaseUrl/sd-api/signin" | ConvertFrom-Json).token
+if (-not $token) { throw "signin 失败（已设密码实例需先在 WebUI 解锁，见 sealdice-plugin-dev 的 test-notes.md）" }
 
 function Get-Texts {
     $raw = curl.exe -s -H "authorization: $token" -H "token: $token" "$BaseUrl/sd-api/configs/customText"

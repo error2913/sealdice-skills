@@ -42,3 +42,6 @@
     `--headless=new --user-data-dir=<临时目录> --no-first-run`。
 13. **set_configs 需完整字段**：配置项要带 `key/type/defaultValue/value/description`，
     最好先 GET 再改 `value` 回传。
+14. **已设密码实例的 API 签入**：密码哈希由 WebUI 前端计算，核心只存哈希；脚本
+    `signin` 仅对未设密码（哈希为空）的新实例可用。已设密码的实例请用浏览器自动化
+    在 WebUI 表单中解锁（Chrome DevTools MCP），或把 `.env` 中的密码交给 UI 流程。

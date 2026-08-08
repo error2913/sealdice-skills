@@ -125,6 +125,11 @@ JS 插件（安装/重载/配置查看修改/指令测试/日志/删除）、自
 截图用 `scripts/screenshot.ps1`（Edge/Chrome 无头模式）。实测结论与踩坑见
 `references/test-notes.md`。
 
+共用资源说明：本技能的 `references/dicescript.md`（豹语）、`references/test-notes.md`
+（实测坑）、`scripts/test-sealdice.ps1` / `screenshot.ps1`（测试脚本）被
+`sealdice-custom-reply` / `sealdice-deck` / `sealdice-sealpack` / `sealdice-custom-text`
+共用（相对路径引用），修改时需保持兼容。
+
 ## 5. API 速查
 
 权威来源：`references/seal.d.ts`（全文 grep）；平铺列表 `references/js_api_list.md`；实战例子 `references/js_example.md`。

@@ -11,8 +11,12 @@ description: 海豹（SealDice）自定义文案修改与调试助手。覆盖 W
 |---|---|
 | WebUI 操作（分类/筛选/导入导出/重置） | `references/config_custom_text.md` |
 | 复杂文案与嵌套规则 | `references/edit_complex_custom_text.md` |
-| 豹语变量与语法（$t/$m/$g、执行块） | `references/script.md`、`sealdice-plugin-dev/references/dicescript.md` |
+| 豹语变量与语法（$t/$m/$g、执行块） | `references/script.md`、`../sealdice-plugin-dev/references/dicescript.md`（共用） |
 | 修改并验证（API 方式，实测可用） | `scripts/edit-custom-text.ps1` |
+| 文案回归测试 / 实测坑 | `../sealdice-plugin-dev/scripts/test-sealdice.ps1`（-Only text）、`../sealdice-plugin-dev/references/test-notes.md`（共用） |
+
+> 共用资源说明：豹语指导、端到端测试脚本与实测坑统一存放在 `sealdice-plugin-dev`，
+> 本技能通过相对路径引用，建议整套安装。
 
 ## 1. 概念
 
@@ -67,3 +71,5 @@ description: 海豹（SealDice）自定义文案修改与调试助手。覆盖 W
 | `references/edit_complex_custom_text.md` | 复杂文案进阶 |
 | `references/script.md` | 豹语变量与脚本语法 |
 | `scripts/edit-custom-text.ps1` | 读取/修改/验证/恢复文案的脚本 |
+| `../sealdice-plugin-dev/references/dicescript.md` | 豹语（DiceScript）语法（共用） |
+| `../sealdice-plugin-dev/references/test-notes.md` | 实测坑记录（共用） |

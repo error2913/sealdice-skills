@@ -11,8 +11,13 @@ description: 海豹（SealDice）自定义回复编写与调试助手。覆盖 W
 |---|---|
 | WebUI 基本操作（开关/文件管理/添加回复项） | `references/config_reply.md` |
 | 进阶编写（正则、豹语、复杂逻辑、限次、随机图） | `references/edit_reply.md` |
-| 豹语语法（变量、执行块、if/三元、时间变量） | `references/script.md` |
+| 豹语语法（变量、执行块、if/三元、时间变量） | `references/script.md`、`../sealdice-plugin-dev/references/dicescript.md`（共用） |
 | 立即可用的完整示例 | `assets/example-reply.yaml`（打卡示例） |
+| 端到端测试 / 实测坑 | `scripts/test-reply.ps1`、`../sealdice-plugin-dev/references/test-notes.md`（共用） |
+
+> 共用资源说明：豹语指导（dicescript.md）、端到端测试脚本（test-sealdice.ps1）与
+> 实测坑记录（test-notes.md）统一存放在 `sealdice-plugin-dev`，本技能通过相对路径引用，
+> 建议整套安装；修改共用资源时保持四类内容技能兼容。
 
 ## 1. 快速开始
 
@@ -84,7 +89,9 @@ desc: ""
 - 三元写法：`判断 ? `值1`, 判断2 ? `值2`, 1 ? `兜底``。
 - 限定每人/每群每天一次：用 `$tDate` 与 `$m变量`/`$g变量` 标记。
 - 多行输出：把 `\n` 写进变量内部、回复中连写 `{$t输出0}{$t输出1}...`，避免空变量造成空行。
-- 调试：`.text` 指令 + 「开启回复调试日志」；群里验证用 sealdice-plugin-dev 的测试环境。
+- 调试：`.text` 指令 + 「开启回复调试日志」；自动化验证用
+  `scripts/test-reply.ps1`（内部调用共用的 test-sealdice.ps1）或
+  sealdice-plugin-dev 的测试环境。
 
 ## 6. 分发与扩展包
 

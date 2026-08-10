@@ -55,21 +55,25 @@
 
 15. **长耗时请求超时时间需设置得足够大**：AI 识别类接口可能数分钟才返回，`Promise.race` 超时
     实测用 420000ms，并回复「模型响应慢请等待」；超时只是让调用方提前报错，
-    底层 fetch 无法真正中断（goja 无 AbortController）。
-16. **`@depends` 作者名可含 `&`**：作者、插件名、版本之间始终用英文冒号分隔
+    底层 fetch 无法真正中断（goja 无 AbortController，v1.6.0 实测确认，
+    引擎支持/不支持清单见 `goja-compat.md`）。
+16. **大整数可直接存 intSet**（v1.6.0 实测）：goja 内部整型为 int64，
+    `seal.vars.intSet/intGet` 可完整存取 `9007199254740991` 与 `Date.now()`
+    时间戳；早期手册「整型 32 位、时间戳改用字符串」的说法已过时。
+17. **`@depends` 作者名可含 `&`**：作者、插件名、版本之间始终用英文冒号分隔
     （如 `作者&合作者:插件名:>=1.0.0`）。
-17. **ob11 方法名兼容 query 旧写法**：`net.callApi(epId, 'get_group_list?no_cache=true')`
+18. **ob11 方法名兼容 query 旧写法**：`net.callApi(epId, 'get_group_list?no_cache=true')`
     这类带 query string 的调用要解析合并进 data，`send_group_msg` 等对象参数写法
     也要同时支持。
-18. **无海豹环境可 mock 测试**：Node 里 mock `seal` / `fetch` / `globalThis.net`
+19. **无海豹环境可 mock 测试**：Node 里 mock `seal` / `fetch` / `globalThis.net`
     可跑通插件核心逻辑，提前发现加载期 ReferenceError/TypeError。
-19. **截图失败要带 HTTP 状态码与响应预览**：只提示「截图失败」无法排查后端，
+20. **截图失败要带 HTTP 状态码与响应预览**：只提示「截图失败」无法排查后端，
     非 200 时把状态码 + 前 120 字符响应体拼进提示。
-20. **不要基于 EXIF 校验图片拍摄时间**：QQ 会清空图片 EXIF 时间，基于 EXIF 的校验
+21. **不要基于 EXIF 校验图片拍摄时间**：QQ 会清空图片 EXIF 时间，基于 EXIF 的校验
     上线后被回滚。
-21. **空数组随机索引导致异常**：`arr[Math.floor(Math.random() * arr.length)]` 在空数组时
+22. **空数组随机索引导致异常**：`arr[Math.floor(Math.random() * arr.length)]` 在空数组时
     取到 `undefined`；随机取值前先判空（验证码题库为空时回退自动生成）。
-22. **失败/成功返回类型必须一致**：失败 `return 0`、成功 `return {qqLevel, nickname}`
+23. **失败/成功返回类型必须一致**：失败 `return 0`、成功 `return {qqLevel, nickname}`
     会导致调用方解构时报错；失败分支返回同构对象 `{ qqLevel: 0, nickname: '未知' }`。
-23. **`logger` 不一定存在**：用 `logger.error` 前确认定义，兜底 `console.error`。
-24. **发布前移除调试输出**：清理 `console.log(JSON.stringify(...))` 等调试输出。
+24. **`logger` 不一定存在**：用 `logger.error` 前确认定义，兜底 `console.error`。
+25. **发布前移除调试输出**：清理 `console.log(JSON.stringify(...))` 等调试输出。

@@ -68,7 +68,8 @@ function sendGroup(gid, text) {
 
 ## 3. fetch 超时（goja 没有 AbortController）
 
-goja 环境的 `fetch` 不支持 `AbortController`，用 `Promise.race` + 定时器实现超时：
+goja 环境（v1.6.0 实测）没有 `AbortController`/`AbortSignal`，`fetch` 无法真正中断，
+用 `Promise.race` + 定时器实现调用方超时：
 
 ```js
 function withTimeout(promise, ms) {
@@ -85,6 +86,8 @@ function withTimeout(promise, ms) {
 已知边界：超时只是提前让调用方收到错误，**底层请求无法真正中断**，会继续占用连接
 直到服务端响应；对外部 API 长耗时请求（如 AI 识别）超时时间需设置得足够大（实测用 420000ms），
 并提前告知用户「模型响应慢请等待」。
+
+引擎支持/不支持的完整清单见 `references/goja-compat.md`。
 
 ## 4. 插件内调用 MCP（Streamable HTTP）
 

@@ -25,7 +25,7 @@ title: 前言
 > **JavaScript**（**JS**）虽然作为 Web 页面中的脚本语言被人所熟知，但是它也被用到了很多 [非浏览器环境](https://zh.wikipedia.org/wiki/JavaScript#其他) 中，例如 [Node.js](https://developer.mozilla.org/zh-CN/docs/Glossary/Node.js)、[Apache CouchDB](https://couchdb.apache.org/)、[Adobe Acrobat](https://opensource.adobe.com/dc-acrobat-sdk-docs/acrobatsdk/) 等。
 > <p style="text-align:right"><i>—— 来自 MDN 文档</i></p> <!-- markdownlint-disable-line MD033 -->
 
-海豹的 JS 插件就是运行在一个非浏览器环境中—— [goja](https://github.com/dop251/goja) 作为 JS 脚本引擎所提供的环境，该环境目前支持了 ES6 基本上全部的特性，包括 `async/await`、`promise` 和 `generator` 等异步编程友好的特性。
+海豹的 JS 插件就是运行在一个非浏览器环境中—— [goja](https://github.com/dop251/goja) 作为 JS 脚本引擎所提供的环境，该环境支持 ES5.1 完整与大部分 ES6+ 特性，包括 `async/await`、`promise`、`generator`、class、可选链、BigInt、TypedArray 等。精确的支持/不支持清单（命名组正则、`Intl`、`AbortController`、WeakMap 坑等）见 [goja 引擎兼容性](./goja-compat.md)。
 
 除了 JS 语言规范所提供的 [内置对象](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects)，海豹额外在环境中提供了如下全局对象：
 
@@ -37,7 +37,10 @@ title: 前言
 
 ::: warning 警告
 
-需要注意引擎的整型为 32 位，请小心溢出问题。
+数值是 IEEE-754 double，安全整数到 2^53-1；goja 内部整型为 int64，
+`seal.vars.intSet/intGet` 可存取 `Date.now()` 时间戳等大整数（v1.6.0 实测）。
+早期手册「整型 32 位」的说法基于旧版引擎，已不适用；仍要注意浮点运算精度
+（如 `0.1 + 0.2`）与 JSON 序列化时的精度损失。
 
 :::
 

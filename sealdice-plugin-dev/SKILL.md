@@ -13,6 +13,7 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 | 大型插件 / TypeScript 工程化 | §3 工程模板 | `references/js_project.md` |
 | 查某个 `seal.*` API | §5 API 速查 | `references/seal.d.ts`（最权威）、`references/js_api_list.md` |
 | 参考实战写法（HTTP、图片、长流程等） | §5 | `references/js_example.md` |
+| 查 goja 支持/不支持的语法与 API | §1 | `references/goja-compat.md` |
 | 引用消息（回复）匹配与操作 | §5 | `references/js_quote_reply.md` |
 | 热重载安全 / 常驻循环防重复 / 状态恢复 | §2.2 | `references/js_advanced_patterns.md` §1 |
 | 主动发消息 / 定时任务群发（无原始 ctx） | §5 | `references/js_advanced_patterns.md` §2 |
@@ -35,10 +36,16 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 
 ## 1. 运行环境（先告诉用户的事实）
 
-- 引擎是 [goja](https://github.com/dop251/goja)，不是 Node、不是浏览器；支持 ES6 几乎全部特性（async/await、Promise、generator）。
-- 整型 32 位，注意溢出：`Date.now()` 等大数不要塞进 `seal.vars.intSet`，改用字符串。
+- 引擎是 [goja](https://github.com/dop251/goja)，不是 Node、不是浏览器；支持 ES5.1
+  完整与大部分 ES6+ 特性（async/await、Promise、generator、class、可选链、BigInt、
+  TypedArray 等）。精确的支持/不支持清单（命名组正则、Intl、AbortController、
+  WeakMap 坑等）见 `references/goja-compat.md`。
+- 数值是 IEEE-754 double，安全整数到 2^53-1；goja 内部整型为 int64，
+  `seal.vars.intSet/intGet` 实测可存取 `Date.now()` 时间戳等大整数
+  （早期手册「整型 32 位」的说法已过时）。
 - 海豹注入的全局：`seal`（全部海豹 API）、`console`、`setTimeout/setInterval`、`fetch`、`atob/btoa`。
-- 不支持 Node 模块、`require`、`process`、`fs`、DOM。
+- `require` 实测仅能加载 `console`、`util`，其余 Node 内置模块（`fs/process/http` 等）
+  与 DOM 均不可用；插件不要依赖 require 加载模块。
 - 工程化方式（TypeScript 编译为 ES6 单文件）与单文件 JS 功能无差异，仅工程便利度不同。
 
 术语约定（本套技能统一）：WebUI 页面名「JS 扩展」与「JS 插件」同义；「扩展包」是
@@ -184,6 +191,9 @@ JS 插件（安装/重载/配置查看修改/指令测试/日志/删除）、自
 
 截图用 `scripts/screenshot.ps1`（Edge/Chrome 无头模式）。实测结论与注意事项见
 `references/test-notes.md`。
+核对当前引擎支持/不支持清单用 `scripts/run-goja-probe.ps1`（配合
+`scripts/goja-probe.js`，输出可存为 `references/goja-probe-result.json` 快照），
+升级海豹后建议重跑一次，见 `references/goja-compat.md` §7。
 
 共用资源说明：本技能的 `references/dicescript.md`（豹语）、`references/test-notes.md`
 （实测注意事项）、`scripts/test-sealdice.ps1` / `screenshot.ps1`（测试脚本）被
@@ -219,7 +229,8 @@ JS 插件（安装/重载/配置查看修改/指令测试/日志/删除）、自
 4. 异步不回复：fetch 回调里用 `replyToSender` 推送；以日志文件为准排查。
 5. 依赖其他扩展：`@depends` 格式 `作者:插件名[:>=1.0.0]`，目标必须先注册。
 6. fetch 不返回/超时：goja 无 `AbortController`，用 `Promise.race` + 定时器包装
-   （见 `references/js_advanced_patterns.md` §3）。
+   （见 `references/js_advanced_patterns.md` §3；引擎能力清单见
+   `references/goja-compat.md`）。
 7. 依赖插件已装但接口缺失：确认使用方 header 已声明 `@depends` 且提供方先注册；
    调用前对 `globalThis` 接口判空。
 
@@ -232,6 +243,7 @@ JS 插件（安装/重载/配置查看修改/指令测试/日志/删除）、自
 | `references/dicescript.md` | 豹语（DiceScript）语法与四类内容编写指导 |
 | `references/test-notes.md` | 端到端实测结论与注意事项 |
 | `references/js_start.md` | 单文件 JS 入门（元数据、最小示例、依赖与版本） |
+| `references/goja-compat.md` | goja 引擎 v1.6.0 支持/不支持清单、宿主注入与 require 限制（实测） |
 | `references/js_project.md` | TypeScript 工程模板 |
 | `references/js_example.md` | 1300+ 行实战示例（HTTP、图片、跨群联动、长流程） |
 | `references/js_api_list.md` | 平铺式 API 列表 |

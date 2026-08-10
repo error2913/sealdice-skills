@@ -46,7 +46,31 @@
     直接 400。正确流程：`GET /sd-api/signin/salt` 取盐 →
     PBKDF2-SHA512(password, salt, 1000, 32) →
     提交 `base64("v01" + salt(utf8) + [0x00,0x03,0xE8] + derived)` 作为 password。
-    实现见 `test-sealdice.ps1` 的 `Get-SealPasswordHash`（与
-    aiplugin4/.dev/sign-hash.mjs 对拍一致）；旧明文 signin 脚本在 1.6+ 会 400。
+    实现见 `test-sealdice.ps1` 的 `Get-SealPasswordHash`；旧明文 signin 脚本
+    在 1.6+ 会 400。
     新装未设密码实例仍可用 `{"password":""}` 直签；或 `.env` 配
     `SEALDICE_PANEL_TOKEN` 跳过 signin。
+
+以下来自真实项目（triangle-score-plugin / sealdice-plugin-ob11-net-connection /
+sealdice-js）线上开发与修复的经验，详见 `js_advanced_patterns.md`：
+
+15. **长耗时请求超时要设大**：AI 识别类接口可能数分钟才返回，`Promise.race` 超时
+    实战用 420000ms，并回复「模型响应慢请等待」；超时只是让调用方提前报错，
+    底层 fetch 无法真正中断（goja 无 AbortController）。
+16. **`@depends` 作者名可含 `&`**：实测 `错误&白鱼:ob11网络连接依赖:>=2.1.0` 合法，
+    作者、插件名、版本之间始终用英文冒号分隔。
+17. **ob11 方法名兼容 query 旧写法**：`net.callApi(epId, 'get_group_list?no_cache=true')`
+    这类带 query string 的调用要解析合并进 data，`send_group_msg` 等对象参数写法
+    也要同时支持。
+18. **无海豹环境可 mock 测试**：Node 里 mock `seal` / `fetch` / `globalThis.net`
+    可跑通插件核心逻辑，提前发现加载期 ReferenceError/TypeError。
+19. **截图失败要带 HTTP 状态码与响应预览**：只提示「截图失败」无法排查后端，
+    非 200 时把状态码 + 前 120 字符响应体拼进提示。
+20. **不要基于 EXIF 校验图片拍摄时间**：QQ 会清空图片 EXIF 时间，基于 EXIF 的上传
+    校验上线后被 revert。
+21. **空数组随机索引崩溃**：`arr[Math.floor(Math.random() * arr.length)]` 在空数组时
+    取到 `undefined`；随机取值前先判空（验证码题库为空时回退自动生成）。
+22. **失败/成功返回类型必须一致**：失败 `return 0`、成功 `return {qqLevel, nickname}`
+    会导致调用方解构崩；失败分支返回同构对象 `{ qqLevel: 0, nickname: '未知' }`。
+23. **`logger` 不一定存在**：用 `logger.error` 前确认定义，兜底 `console.error`。
+24. **上线前删除调试残留**：清掉 `console.log(JSON.stringify(...))` 等调试输出。

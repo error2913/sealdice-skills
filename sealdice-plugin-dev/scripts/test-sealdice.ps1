@@ -60,7 +60,7 @@ function Invoke-SealApi {
 
 function Get-SealPasswordHash {
     # 新版（1.6+）signin：PBKDF2-SHA512(password, salt, 1000, 32)，
-    # 提交 base64("v01" + salt(utf8) + [00 03 E8] + derived)，与 aiplugin4/.dev/sign-hash.mjs 等价
+    # 提交 base64("v01" + salt(utf8) + [00 03 E8] + derived)，与新版面板实际行为一致
     param([string]$Password, [string]$Salt)
     $saltBytes = [System.Text.Encoding]::UTF8.GetBytes($Salt)
     $pbkdf2 = [System.Security.Cryptography.Rfc2898DeriveBytes]::new($Password, $saltBytes, 1000, [System.Security.Cryptography.HashAlgorithmName]::SHA512)

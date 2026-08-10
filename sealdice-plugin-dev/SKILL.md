@@ -14,6 +14,12 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 | 查某个 `seal.*` API | §5 API 速查 | `references/seal.d.ts`（最权威）、`references/js_api_list.md` |
 | 参考实战写法（HTTP、图片、长流程等） | §5 | `references/js_example.md` |
 | 引用消息（回复）匹配与操作 | §5 | `references/js_quote_reply.md` |
+| 热重载安全 / 常驻循环防重复 / 状态恢复 | §2.2 | `references/js_advanced_patterns.md` §1 |
+| 主动发消息 / 定时任务群发（无原始 ctx） | §5 | `references/js_advanced_patterns.md` §2 |
+| fetch 超时 / 插件内调用 MCP（Streamable HTTP） | §5 | `references/js_advanced_patterns.md` §3-4 |
+| 跨插件暴露 / 调用 API | §2.11 | 本节 + `references/js_advanced_patterns.md` §5 |
+| 调用 ob11 网络连接依赖（QQ 发消息/取图/合并转发） | §5 | `references/js_advanced_patterns.md` §6 |
+| 真实插件 bug 教训 / 无海豹环境 mock 测试 | §6 | `references/js_advanced_patterns.md` §7-8 |
 | 自定义规则模板（GameSystem） | §5 | `references/js_gamesystem.md` |
 | 搭建测试环境 / 指令测试 / 连接 WebUI / QQ 验证 | §4 | `references/test-environment.md` |
 | 安装 QQ-MCP / Chrome DevTools MCP（Chrome/Edge） | §4 | `references/mcp-setup.md` |
@@ -100,6 +106,9 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
     用于 HTTP 304 缓存协商。
 
 常见陷阱：热重载重复注册（永远先 find）；`getArgN` 1-based；storage 只收字符串；别名复制对象导致回调丢失；私聊/群 ctx 不同，跨群发消息用 `seal.createTempCtx`；fetch 是异步的，结果用 `replyToSender` 后续推送；goja 无 DOM，npm 包先验证。
+
+进阶写法（热重载安全三件套、主动群发、fetch 超时、MCP 调用、跨插件 API、
+ob11 调用、真实 bug 教训）见 `references/js_advanced_patterns.md`。
 
 ## 3. 方式二：TypeScript 工程模板
 
@@ -195,7 +204,12 @@ JS 插件（安装/重载/配置查看修改/指令测试/日志/删除）、自
 - 群名片：`seal.applyPlayerGroupCardByTemplate` / `setPlayerGroupCard`
 - 牌堆：`seal.deck.draw(ctx, '堆名', true)`、`seal.deck.reload()`
 - 主动发消息：`seal.getEndPoints()[0]` + `seal.newMessage()` + `seal.createTempCtx(ep, msg)` + `seal.replyGroup`
+- 配置清理：`seal.ext.unregisterConfig(ext, ...keys)`（低版本无此 API，需 try/catch）
+- 跨插件：`globalThis` 暴露/读取接口 + `// @depends 作者:插件名:>=版本` 声明依赖
+- 网络：`globalThis.net.callApi(epId, method, data)`（由 ob11 网络连接依赖插件提供）
 - 其他：`seal.getVersion()`、`seal.base64ToImage(b64)`、`fetch`、`setTimeout`
+
+超时与 MCP 等进阶 API 用法见 `references/js_advanced_patterns.md` §3-4。
 
 ## 6. 调试与排错
 
@@ -204,6 +218,10 @@ JS 插件（安装/重载/配置查看修改/指令测试/日志/删除）、自
 3. 变量类型不匹配：`intGet` 拿到字符串时 `ok=false`。
 4. 异步不回复：fetch 回调里用 `replyToSender` 推送；以日志文件为准排查。
 5. 依赖其他扩展：`@depends` 格式 `作者:插件名[:>=1.0.0]`，目标必须先注册。
+6. fetch 不返回/超时：goja 无 `AbortController`，用 `Promise.race` + 定时器包装
+   （见 `references/js_advanced_patterns.md` §3）。
+7. 依赖插件已装但接口缺失：确认使用方 header 已声明 `@depends` 且提供方先注册；
+   调用前对 `globalThis` 接口判空。
 
 ## 7. 参考文件索引
 
@@ -218,6 +236,7 @@ JS 插件（安装/重载/配置查看修改/指令测试/日志/删除）、自
 | `references/js_example.md` | 1300+ 行实战示例（HTTP、图片、跨群联动、长流程） |
 | `references/js_api_list.md` | 平铺式 API 列表 |
 | `references/seal.d.ts` | 类型定义（最权威 API 索引） |
+| `references/js_advanced_patterns.md` | 实战进阶模式（热重载安全/主动发消息/fetch 超时/MCP/跨插件 API/ob11 调用/真实 bug 教训/mock 测试） |
 | `references/js_quote_reply.md` | 引用消息（`[CQ:reply,id=...]`）匹配模式实战 |
 | `references/js_gamesystem.md` | 自定义规则模板 |
 | `references/config_jsscript.md` | WebUI JS 插件管理 |

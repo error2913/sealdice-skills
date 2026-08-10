@@ -1,6 +1,6 @@
 # 引用消息（回复）匹配模式
 
-来自真实插件「加群验证」（`sealdice-js` 仓库，依赖 ob11 网络连接）的实现：
+来自已实测验证的插件实现（依赖 ob11 网络连接）：
 管理员**引用**机器人发出的某条消息，回复「同意 / 拒绝 / 取消」即可执行对应操作。
 该模式可泛化为「引用某条消息触发操作」的通用写法。
 
@@ -34,7 +34,7 @@ if (match && !isNaN(match[1]) && match[2].trim()) {
 
 ## 数据流（msgId 从哪来、怎么查）
 
-1. 机器人发出提示消息并保存返回的 `message_id`。加群验证通过 ob11 依赖发送并取回：
+1. 机器人发出提示消息并保存返回的 `message_id`。本实现通过 ob11 依赖发送并取回：
    ```js
    // net.callApi(epId, 'send_group_msg', { group_id, message }) -> data.message_id
    reqMap[user_id] = { flag, sub_type, msgId };      // 加群请求条目

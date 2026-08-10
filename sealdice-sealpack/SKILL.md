@@ -165,7 +165,7 @@ sealpack token set <token>                           # 直接写网站后台复�
 | `assets/info.toml` | 带完整注释的 info.toml 模板 |
 | `scripts/test-sealpack.ps1` | 扩展包端到端测试（构建/安装/启用/重载/指令测试/卸载） |
 | `../sealdice-plugin-dev/references/dicescript.md` | 豹语（DiceScript）语法（共用） |
-| `../sealdice-plugin-dev/references/test-notes.md` | 实测坑记录（共用） |
+| `../sealdice-plugin-dev/references/test-notes.md` | 实测注意事项（共用） |
 
-共用资源说明：豹语指导、测试脚本与实测坑统一存放在 `sealdice-plugin-dev`，
+共用资源说明：豹语指导、测试脚本与实测注意事项统一存放在 `sealdice-plugin-dev`，
 本技能通过相对路径引用，建议整套安装。

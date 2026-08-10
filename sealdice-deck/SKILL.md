@@ -128,7 +128,7 @@ distinct = true            # 云端与本地去重（注意字段名是 distinct
 | `assets/example-deck.toml` / `.json` / `.yaml` | 三格式最小示例 |
 | `../sealdice-plugin-dev/references/dicescript.md` | 豹语（DiceScript）语法（共用，含牌堆 `[...]` 用法） |
 | `scripts/test-deck.ps1` | 牌堆端到端测试（上传/重载/抽牌/删除） |
-| `../sealdice-plugin-dev/references/test-notes.md` | 实测坑记录（共用） |
+| `../sealdice-plugin-dev/references/test-notes.md` | 实测注意事项（共用） |
 
-共用资源说明：豹语指导、测试脚本与实测坑统一存放在 `sealdice-plugin-dev`，
+共用资源说明：豹语指导、测试脚本与实测注意事项统一存放在 `sealdice-plugin-dev`，
 本技能通过相对路径引用，建议整套安装。

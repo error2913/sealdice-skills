@@ -19,7 +19,7 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
 | fetch 超时 / 插件内调用 MCP（Streamable HTTP） | §5 | `references/js_advanced_patterns.md` §3-4 |
 | 跨插件暴露 / 调用 API | §2.11 | 本节 + `references/js_advanced_patterns.md` §5 |
 | 调用 ob11 网络连接依赖（QQ 发消息/取图/合并转发） | §5 | `references/js_advanced_patterns.md` §6 |
-| 真实插件 bug 教训 / 无海豹环境 mock 测试 | §6 | `references/js_advanced_patterns.md` §7-8 |
+| 常见缺陷与修复经验 / 无海豹环境 mock 测试 | §6 | `references/js_advanced_patterns.md` §7-8 |
 | 自定义规则模板（GameSystem） | §5 | `references/js_gamesystem.md` |
 | 搭建测试环境 / 指令测试 / 连接 WebUI / QQ 验证 | §4 | `references/test-environment.md` |
 | 安装 QQ-MCP / Chrome DevTools MCP（Chrome/Edge） | §4 | `references/mcp-setup.md` |
@@ -56,7 +56,7 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
    `@depends`（`作者:插件名[:版本约束]`，可多行）、`@sealVersion`（目标海豹版本）、
    `@updateUrl`（更新链接，可多行）、`@etag`。注意：`@depends`/`@updateUrl` 示例
    不要原样保留，`@depends` 指向不存在的插件会导致拒载。
-2. 扩展注册三件套（热重载安全，务必先 find 后 new）：
+2. 扩展注册（热重载安全，务必先 find 后 new）：
    ```js
    let ext = seal.ext.find('ext_name');
    if (!ext) {
@@ -105,10 +105,10 @@ description: 海豹（SealDice）JS 插件/扩展开发与测试助手。覆盖�
     `POST /js/check_update` + `POST /js/update`），确认后替换并重载；可选 `@etag`
     用于 HTTP 304 缓存协商。
 
-常见陷阱：热重载重复注册（永远先 find）；`getArgN` 1-based；storage 只收字符串；别名复制对象导致回调丢失；私聊/群 ctx 不同，跨群发消息用 `seal.createTempCtx`；fetch 是异步的，结果用 `replyToSender` 后续推送；goja 无 DOM，npm 包先验证。
+常见陷阱：热重载重复注册（始终先 find）；`getArgN` 1-based；storage 只收字符串；别名复制对象导致回调丢失；私聊/群 ctx 不同，跨群发消息用 `seal.createTempCtx`；fetch 是异步的，结果用 `replyToSender` 后续推送；goja 无 DOM，npm 包先验证。
 
-进阶写法（热重载安全三件套、主动群发、fetch 超时、MCP 调用、跨插件 API、
-ob11 调用、真实 bug 教训）见 `references/js_advanced_patterns.md`。
+进阶写法（热重载安全、主动群发、fetch 超时、MCP 调用、跨插件 API、
+ob11 调用、常见缺陷与修复经验）见 `references/js_advanced_patterns.md`。
 
 ## 3. 方式二：TypeScript 工程模板
 
@@ -182,11 +182,11 @@ JS 插件（安装/重载/配置查看修改/指令测试/日志/删除）、自
 .\scripts\test-sealdice.ps1 -BaseUrl http://127.0.0.1:3211 -Only all
 ```
 
-截图用 `scripts/screenshot.ps1`（Edge/Chrome 无头模式）。实测结论与踩坑见
+截图用 `scripts/screenshot.ps1`（Edge/Chrome 无头模式）。实测结论与注意事项见
 `references/test-notes.md`。
 
 共用资源说明：本技能的 `references/dicescript.md`（豹语）、`references/test-notes.md`
-（实测坑）、`scripts/test-sealdice.ps1` / `screenshot.ps1`（测试脚本）被
+（实测注意事项）、`scripts/test-sealdice.ps1` / `screenshot.ps1`（测试脚本）被
 `sealdice-custom-reply` / `sealdice-deck` / `sealdice-sealpack` / `sealdice-custom-text`
 共用（相对路径引用），修改时需保持兼容。
 
@@ -230,13 +230,13 @@ JS 插件（安装/重载/配置查看修改/指令测试/日志/删除）、自
 | `references/test-environment.md` | 测试环境完整流程（下载海豹 / WebUI / 指定 WebUI / qqmcp） |
 | `references/mcp-setup.md` | QQ-MCP 与 Chrome DevTools MCP（Chrome/Edge）详细安装与配置 |
 | `references/dicescript.md` | 豹语（DiceScript）语法与四类内容编写指导 |
-| `references/test-notes.md` | 端到端实测结论与踩坑记录 |
+| `references/test-notes.md` | 端到端实测结论与注意事项 |
 | `references/js_start.md` | 单文件 JS 入门（元数据、最小示例、依赖与版本） |
 | `references/js_project.md` | TypeScript 工程模板 |
 | `references/js_example.md` | 1300+ 行实战示例（HTTP、图片、跨群联动、长流程） |
 | `references/js_api_list.md` | 平铺式 API 列表 |
 | `references/seal.d.ts` | 类型定义（最权威 API 索引） |
-| `references/js_advanced_patterns.md` | 实战进阶模式（热重载安全/主动发消息/fetch 超时/MCP/跨插件 API/ob11 调用/真实 bug 教训/mock 测试） |
+| `references/js_advanced_patterns.md` | 实战进阶模式（热重载安全/主动发消息/fetch 超时/MCP/跨插件 API/ob11 调用/常见缺陷与修复经验/mock 测试） |
 | `references/js_quote_reply.md` | 引用消息（`[CQ:reply,id=...]`）匹配模式实战 |
 | `references/js_gamesystem.md` | 自定义规则模板 |
 | `references/config_jsscript.md` | WebUI JS 插件管理 |

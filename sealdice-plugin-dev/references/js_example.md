@@ -707,7 +707,7 @@ if (!seal.ext.find('test')) {
 // @timestamp    1676386517
 // 2023-02-14 22:55:17
 // @license      MIT
-// @homepageURL  https://github.com/ChangingSelf/sealdice-js-ext-anchor
+// @homepageURL  https://github.com/<owner>/<repo>
 // ==/UserScript==
 
 (() => {

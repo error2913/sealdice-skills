@@ -13,10 +13,10 @@ description: 海豹（SealDice）自定义回复编写与调试助手。覆盖 W
 | 进阶编写（正则、豹语、复杂逻辑、限次、随机图） | `references/edit_reply.md` |
 | 豹语语法（变量、执行块、if/三元、时间变量） | `references/script.md`、`../sealdice-plugin-dev/references/dicescript.md`（共用） |
 | 立即可用的完整示例 | `assets/example-reply.yaml`（打卡示例） |
-| 端到端测试 / 实测坑 | `scripts/test-reply.ps1`、`../sealdice-plugin-dev/references/test-notes.md`（共用） |
+| 端到端测试 / 实测注意事项 | `scripts/test-reply.ps1`、`../sealdice-plugin-dev/references/test-notes.md`（共用） |
 
 > 共用资源说明：豹语指导（dicescript.md）、端到端测试脚本（test-sealdice.ps1）与
-> 实测坑记录（test-notes.md）统一存放在 `sealdice-plugin-dev`，本技能通过相对路径引用，
+> 实测注意事项（test-notes.md）统一存放在 `sealdice-plugin-dev`，本技能通过相对路径引用，
 > 建议整套安装；修改共用资源时保持四类内容技能兼容。
 
 ## 1. 快速开始

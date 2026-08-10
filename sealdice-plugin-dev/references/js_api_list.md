@@ -7,7 +7,7 @@ title: API 列表
 
 ::: info 本节内容
 
-本节为海豹提供的 JS API 列表。目前的内容是从上古文档中直接迁移过来的，难免存在错误和缺失，参考本节时请注意识别。
+本节为海豹提供的 JS API 列表。目前的内容是从早期文档中直接迁移过来的，难免存在错误和缺失，参考本节时请注意识别。
 
 更好的方式是参考海豹提供的 [seal.d.ts](https://raw.githubusercontent.com/sealdice/sealdice-js-ext-template/master/types/seal.d.ts) 文件。（但同样存在缺失）
 

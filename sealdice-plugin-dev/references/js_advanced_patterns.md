@@ -87,6 +87,10 @@ function withTimeout(promise, ms) {
 直到服务端响应；对外部 API 长耗时请求（如 AI 识别）超时时间需设置得足够大（实测用 420000ms），
 并提前告知用户「模型响应慢请等待」。
 
+另外 fetch 是「整包响应」语义：响应体会被完整缓冲后一次性返回，没有
+`response.body`/ReadableStream，不支持流式读取；不要用它连 SSE 等不结束的
+长连接接口（详见 `references/goja-compat.md` §6）。
+
 引擎支持/不支持的完整清单见 `references/goja-compat.md`。
 
 ## 4. 插件内调用 MCP（Streamable HTTP）

@@ -84,7 +84,10 @@ goja README 的官方能力声明：ES5.1 完整；已实现特性通过
   getEndPoints/setPlayerGroupCard` 等，见 `seal.d.ts`）。
 - `console`：goja_nodejs console，输出转发到海豹日志与 WebUI 控制台。
 - `setTimeout/clearTimeout/setInterval/clearInterval`：goja_nodejs eventloop 提供。
-- `fetch`：fy0/gojax 实现，走海豹内置代理。
+- `fetch`：fy0/gojax 实现，走海豹内置代理（goproxy）。响应体在 Go 侧整体
+  缓冲后一次性交给 JS；`Response` 只有 `body/headers/status/ok/url/method`
+  和 `text()/json()`，没有 `response.body`/ReadableStream，也不支持
+  `AbortController`（流式/SSE 不可用，见 §6）。
 - `WebSocket`：海豹 `utils/plugin/websocket` 提供。
 - `atob/btoa`：海豹自实现（标准 base64）。`atob` 会先剥除
   `data:text/plain;base64,` 前缀与空格再解码，非法输入返回错误。
@@ -123,6 +126,13 @@ goja README 的官方能力声明：ES5.1 完整；已实现特性通过
    早期手册「整型 32 位、时间戳不要存入 intSet」的说法基于旧版引擎，对 v1.6.0 不成立。
 4. **浮点与数组长度**：数值运算遵循 double 精度（如 `0.1 + 0.2`）；数组长度上限
    `2^32 - 1` 是 JS 规范行为，超出部分不作为数组索引。
+5. **fetch 不支持流式读取（SSE）**：Go 侧用 `httptest.NewRecorder` 完整缓冲
+   响应体，JS 侧 `Response` 无 `body`/ReadableStream。对 SSE 这类持续推送、
+   响应不结束的接口，`fetch` 会一直不返回，底层 goroutine 与缓冲内存持续
+   累积——不要用 fetch 直连 SSE；实时推送改用 WebSocket 或轮询，或将流式
+   处理放到宿主工具链/外部服务，把结果注入插件。注意区分：能整体读完的
+   SSE 格式响应体（如部分 MCP Streamable HTTP 端点一次返回完整
+   `data:` 文本）可以解析，只是收不到分片事件。
 5. **`RegExp` 命名组陷阱**：`/(?<w>\w+)/` 不报语法错误，但 `.groups` 不存在，
    按命名组写的代码会在运行期静默取到 `undefined`，应改用普通捕获组。
 
